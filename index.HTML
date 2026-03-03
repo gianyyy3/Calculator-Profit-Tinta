@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculator Rulaj</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--cream:#f5f0e8;--dark:#1a1410;--brown:#6b4226;--rust:#c0392b;--gold:#d4a843;--lb:#a0725a;--soft:#e8dfd0}
+body{background:var(--cream);font-family:'DM Mono',monospace;padding:32px 20px}
+.wrap{max-width:680px;margin:0 auto}
+header{text-align:center;margin-bottom:40px;padding-bottom:24px;border-bottom:3px solid var(--brown)}
+.ey{font-size:9px;letter-spacing:5px;text-transform:uppercase;color:var(--lb);display:block;margin-bottom:8px}
+h1{font-family:'Playfair Display',serif;font-size:clamp(28px,6vw,48px);font-weight:900;color:var(--brown);line-height:1.05}
+h1 em{color:var(--rust);font-style:normal}
+.sub{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--lb);margin-top:7px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:24px}
+@media(max-width:480px){.grid{grid-template-columns:1fr}}
+.field{background:#fff;border:2px solid var(--soft);border-radius:6px;padding:13px 15px;transition:border-color .2s}
+.field:focus-within{border-color:var(--brown)}
+.field label{display:block;font-size:8.5px;letter-spacing:3px;text-transform:uppercase;color:var(--lb);margin-bottom:5px}
+.frow{display:flex;align-items:center;gap:7px}
+.field input{flex:1;border:none;outline:none;font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--dark);background:transparent;width:100%;min-width:0}
+.unit{font-size:10px;color:var(--lb);white-space:nowrap}
+.btn{width:100%;padding:16px;background:var(--brown);color:var(--cream);border:none;border-radius:6px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:background .2s;margin-bottom:32px}
+.btn:hover{background:var(--dark)}
+#res{display:none}
+#res.on{display:block}
+.slbl{font-size:8.5px;letter-spacing:4px;text-transform:uppercase;color:var(--lb);margin-bottom:13px;padding-bottom:7px;border-bottom:1px solid var(--soft)}
+.bd{background:#fff;border:2px solid var(--soft);border-radius:6px;overflow:hidden;margin-bottom:18px}
+.brow{display:flex;justify-content:space-between;align-items:center;padding:12px 17px;border-bottom:1px solid var(--soft);font-size:12.5px}
+.brow:last-child{border-bottom:none}
+.bl{color:var(--lb)}.bv{font-weight:500;color:var(--dark)}
+.brow.tot{background:var(--brown)}.brow.tot .bl{color:rgba(245,240,232,.6)}.brow.tot .bv{color:var(--gold);font-size:15px}
+.hero{background:var(--dark);border-radius:6px;padding:30px;text-align:center;margin-bottom:18px}
+.hl{font-size:8.5px;letter-spacing:4px;text-transform:uppercase;color:rgba(245,240,232,.4);display:block;margin-bottom:9px}
+.hv{font-family:'Playfair Display',serif;font-size:clamp(50px,11vw,84px);font-weight:900;color:var(--gold);line-height:1;display:block}
+.hu{font-size:11px;color:rgba(245,240,232,.4);letter-spacing:2px;text-transform:uppercase;margin-top:4px;display:block}
+.hx{margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08);font-size:15px;color:rgba(245,240,232,.75);letter-spacing:.5px}
+.cgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:32px}
+@media(max-width:440px){.cgrid{grid-template-columns:1fr 1fr}}
+.cc{background:#fff;border:2px solid var(--soft);border-radius:6px;padding:14px 10px;text-align:center}
+.cn{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--brown);display:block}
+.cl{font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--lb);margin-top:3px;display:block}
+.dot{text-align:center;color:var(--soft);font-size:18px;letter-spacing:8px;margin:5px 0 20px}
+.nota{text-align:center;font-size:10px;color:var(--lb);line-height:1.9;padding:0 8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="ey">Instrument de calcul financiar</span>
+  <h1>Calculator <em>Rulaj Zilnic</em></h1>
+  <p class="sub">Spălătorie Covoare · Target Profit</p>
+</header>
+<div class="grid">
+  <div class="field"><label>Profit lunar țintă</label><div class="frow"><input type="number" id="pr" value="5000"><span class="unit">EUR</span></div></div>
+  <div class="field"><label>Curs EUR / LEI</label><div class="frow"><input type="number" id="cr" value="5.00" step="0.01"><span class="unit">LEI</span></div></div>
+  <div class="field"><label>Cheltuieli lunare</label><div class="frow"><input type="number" id="ch" value="30000"><span class="unit">LEI</span></div></div>
+  <div class="field"><label>Preț serviciu</label><div class="frow"><input type="number" id="pt" value="16" step="0.5"><span class="unit">LEI / MP</span></div></div>
+  <div class="field"><label>Zile lucr. / săptămână</label><div class="frow"><input type="number" id="zs" value="5" min="1" max="7"><span class="unit">ZILE</span></div></div>
+  <div class="field"><label>Săptămâni / lună</label><div class="frow"><input type="number" id="sl" value="4.33" step="0.01"><span class="unit">SĂPT.</span></div></div>
+</div>
+<button class="btn" onclick="calc()">▶ Calculează rulajul zilnic</button>
+<div id="res">
+  <p class="slbl">Detaliu calcul lunar</p>
+  <div class="bd" id="bd"></div>
+  <div class="dot">· · ·</div>
+  <p class="slbl">Rulaj zilnic necesar</p>
+  <div class="hero">
+    <span class="hl">Metri pătrați de spălat pe zi</span>
+    <span class="hv" id="mpzi">—</span>
+    <span class="hu">mp / zi lucrătoare</span>
+    <div class="hx" id="cazi"></div>
+  </div>
+  <div class="dot">· · ·</div>
+  <p class="slbl">Referință — covoare echivalente / zi</p>
+  <div class="cgrid" id="cg"></div>
+  <p class="nota" id="nota"></p>
+</div>
+</div>
+<script>
+function f(n){return Math.round(n).toLocaleString('ro-RO')}
+function calc(){
+  const p=+document.getElementById('pr').value||0;
+  const c=+document.getElementById('cr').value||5;
+  const ch=+document.getElementById('ch').value||0;
+  const pt=+document.getElementById('pt').value||16;
+  const zs=+document.getElementById('zs').value||5;
+  const sl=+document.getElementById('sl').value||4.33;
+  const profLei=p*c, caL=profLei+ch, zL=zs*sl, caZ=caL/zL, mp=caZ/pt;
+  const refs=[{mp:4,l:'2×2 m'},{mp:6,l:'2×3 m'},{mp:9,l:'3×3 m'},{mp:12,l:'3×4 m'},{mp:15,l:'3×5 m'},{mp:20,l:'4×5 m'}];
+  document.getElementById('bd').innerHTML=`
+    <div class="brow"><span class="bl">Profit țintă lunar</span><span class="bv">${f(p)} EUR = ${f(profLei)} lei</span></div>
+    <div class="brow"><span class="bl">Cheltuieli lunare</span><span class="bv">${f(ch)} lei</span></div>
+    <div class="brow tot"><span class="bl">Cifră de afaceri / lună</span><span class="bv">${f(caL)} lei</span></div>
+    <div class="brow"><span class="bl">Zile lucrătoare / lună</span><span class="bv">~${zL.toFixed(1)} zile</span></div>
+    <div class="brow"><span class="bl">Preț serviciu</span><span class="bv">${pt.toFixed(2)} lei / mp</span></div>`;
+  document.getElementById('mpzi').textContent=mp.toFixed(1);
+  document.getElementById('cazi').textContent=f(caZ)+' lei cifră de afaceri / zi';
+  document.getElementById('cg').innerHTML=refs.map(r=>`<div class="cc"><span class="cn">${(mp/r.mp).toFixed(1)}</span><span class="cl">covoare ${r.l}</span></div>`).join('');
+  document.getElementById('nota').textContent=`La ${pt} lei/mp trebuie să procesezi ${mp.toFixed(1)} mp în fiecare zi lucrătoare — adică ${f(caZ)} lei cifră de afaceri zilnică — pentru a atinge profitul de ${f(p)} EUR/lună. Calculul presupune ~${zL.toFixed(1)} zile lucrătoare/lună.`;
+  const r=document.getElementById('res');r.classList.add('on');
+  setTimeout(()=>r.scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+window.onload=calc;
+</script>
+</body>
+</html>
